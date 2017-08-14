@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans:bean xmlns="http://www.springframework.org/schema/security"
+	xmlns:beans="http://www.springframework.org/schema/beans" 
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans 
+    http://www.springframework.org/schema/beans/spring-beans.xsd
+    http://www.springframework.org/schema/security
+    http://www.springframework.org/schema/security/spring-security.xsd">
+   	
+   	<http auto-config="true">
+   	
+	 	<intercept-url pattern="/" access="permitAll" />
+		<intercept-url pattern="/index" access="permitAll" />
+	 
+	 	
+	 <intercept-url pattern="/admin*" access="hasRole('ROLE_ADMIN')" />
+	 <form-login login-page="/login" username-parameter="uemail" password-parameter="upass" login-processing-url="/loginx"
+			authentication-failure-url="/login?error" />
+	 <logout logout-success-url="/login?logout" />
+	 <csrf disabled="true" />
+		
+	</http>
+	
+	<!-- <authentication-manager> <authentication-provider> <user-service> <user 
+		name="admin" password="pass" authorities="ROLE_ADMIN" /> </user-service> 
+		</authentication-provider> </authentication-manager> 
+	-->
+	
+	<authentication-manager>
+		<authentication-provider>
+			<jdbc-user-service data-source-ref="dataSource"
+				users-by-username-query="select uemail,upass,isactive from User where uemail=?"
+				authorities-by-username-query="select email,role from Authorisation where email=?  " />
+		</authentication-provider>
+	</authentication-manager>
+</beans:bean>
